@@ -7,7 +7,7 @@ Palette based sprites are faster and use less memory, but are limited to 256 col
 
 I have written a third, indexed based, class but at this time it is slower than using a 16bit framebuffer, so has no advantages over the palette based sprite. This is not currently included.
 
-This library is still in development and its API/types will be subject subject to frequent change until a Beta is reached, and there will be many bugs not yet found.
+This library is still in development and its API/types will be subject to frequent and breaking changes until a Beta is reached, and there will be many bugs not yet found.
 
 Only tested on the ESP32-S3 with a 320*170 ST7789 based TFT display (i.e. the LilyGo T3).
 
