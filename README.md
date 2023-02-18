@@ -6,3 +6,6 @@ This an Alpha version of my Sprite/Blitter library. Currently only 2 classes are
 This library is still in development and its API/types will be subject subject to frequent change until a Beta is reached, and there will be many bugs not yet found.
 
 Only tested on the ESP32-S3 with a 320*170 ST7789 based TFT display (i.e. the LilyGo T3).
+
+Video of this in action:
+https://youtu.be/wZR8tQ5Uga4
