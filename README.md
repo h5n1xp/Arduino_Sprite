@@ -16,6 +16,6 @@ https://youtu.be/wZR8tQ5Uga4
 
 #Current Focus
 1. Cleaning up the Draw methods to include animation frame and tilemap support.
-2. Add RLE to the palette image format, this should reduce memory traffic and inproce performance.
+2. Add RLE to the palette image format, this should reduce memory traffic and improve performance.
 3. Release an image conversion application, to generate compatible data.
 
