@@ -13,3 +13,9 @@ Only tested on the ESP32-S3 with a 320*170 ST7789 based TFT display (i.e. the Li
 
 Video of this in action:
 https://youtu.be/wZR8tQ5Uga4
+
+#Current Focus
+1. Cleaning up the Draw methods to include animation frame and tilemap support.
+2. Add RLE to the palette image format, this should reduce memory traffic and inproce performance.
+3. Release an image conversion application, to generate compatible data.
+
