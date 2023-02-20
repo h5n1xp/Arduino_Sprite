@@ -11,8 +11,9 @@ This library is still in development and its API/types will be subject to freque
 
 Only tested on the ESP32-S3 with a 320*170 ST7789 based TFT display (i.e. the LilyGo T3).
 
-Video of this in action:
+Videos of this in action:
 https://youtu.be/wZR8tQ5Uga4
+https://youtu.be/56ELuOAAgyg
 
 #Current Focus
 1. Cleaning up the Draw methods to include animation frame and tilemap support. Also want to add playfields, to make smooth scrolling esiser.
