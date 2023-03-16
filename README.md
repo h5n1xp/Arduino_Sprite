@@ -23,13 +23,16 @@ The constrctor requires three parameters:
 
 Arduino_Sprite* sprite = new Arduino_Sprite(width,height,output_canvas);
 
-This is to specify the actual size of the image to use, as well out the output canvas which will usuall be the size of the display and will be uploaded during a flush() call. Currentlt the output canvas needs to be 16bit 5:6:6 RGB.
+This is to specify the actual size of the image to use, as well out the output canvas which will usuall be the size of the display and will be uploaded during a flush() call. Currently the output canvas needs to be 16bit 5:6:6 RGB.
 
 Before usage, one must call the begin() method which sets up the buffers and initilises all the sprite's properties. There are several methods to chose from.
 
 sprite->begin(); // Will allocate an internal 16bit canvas object with the dimensions specified in the constructor
+
 sprite->begin(canvas); // Will use an already allocated 16bit canvas.
+
 sprite->begin(bitmap8Bit, palette); // Will take an allocated 8bit indexed bitmap and a palette (max 256 colours).
+
 sprite->begin(bitmap16bit); // will take an allocated 16bit 5:6:5 RGB bitmap.
 
 The sprites which are passed a bitmap do not have an associated canvas so can't accept drawing commands. If a you allow the sprite to allocate its own canvas, you can obtain a pointer with the GetCanvas() method, which can accept the normal Arduino_Canvas drawing methods.
