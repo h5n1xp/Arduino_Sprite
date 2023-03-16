@@ -1,14 +1,11 @@
 //
 //  arduino_sprite.cpp
-//  Arduino_Sprite
+//  SpriteProjects
 //
-//  Created by Matt Parsons on 27/01/2023.
-//  Copyright © 2023 Matt Parsons. All rights reserved.
+//  Created by Matt Parsons on 06/03/2023.
 //
-
 
 #include "arduino_sprite.h"
-
 
 Arduino_Sprite::Arduino_Sprite(int16_t w, int16_t h, Arduino_GFX* output){
     _output = output;
@@ -17,10 +14,13 @@ Arduino_Sprite::Arduino_Sprite(int16_t w, int16_t h, Arduino_GFX* output){
     _fh = h;
     _fx = 0;
     _fy = 0;
+    _backingStore = NULL;
+    _canvas = NULL;
 }
 
 void Arduino_Sprite::begin(){
     _canvas = new Arduino_Canvas(_fw,_fh,_output);
+    _canvas->begin(GFX_SKIP_OUTPUT_BEGIN);
     begin(_canvas->getFramebuffer());
 }
 
@@ -37,7 +37,6 @@ void Arduino_Sprite::begin(uint8_t* source, uint16_t* pal){
   _blitter->_lineMod = c->width();
   _blitter->_maxY = c->height();
   _blitter->_width = _fw;
-  _backingStore = NULL;
   _blitter->_8bitBuffer = source;
   _blitter->_16bitBuffer = NULL;
   _blitter->_palette = pal;
@@ -51,7 +50,6 @@ void Arduino_Sprite::begin(uint16_t* source){
   _blitter->_lineMod = c->width();
   _blitter->_maxY = c->height();
   _blitter->_width = _fw;
-  _backingStore = NULL;
   _blitter->_8bitBuffer = NULL;
   _blitter->_16bitBuffer = source;
   _blitter->_palette = NULL;
@@ -246,10 +244,14 @@ void Arduino_Sprite::DrawWithKey(int16_t x, int16_t y, uint16_t frame){
 
 
 void Arduino_Sprite::SaveBackground(int16_t x, int16_t y){
-    _blitter->Save(x,y, _fw, _fh, _backingStore);
+    if(_backingStore){
+        _blitter->Save(x,y, _fw, _fh, _backingStore);
+    }
 }
 
 
 void Arduino_Sprite::Clear(){
-    _blitter->Restore(_output_x,_output_y, _fw, _fh, _backingStore);
+    if(_backingStore){
+        _blitter->Restore(_output_x,_output_y, _fw, _fh, _backingStore);
+    }
 }
