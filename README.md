@@ -37,7 +37,15 @@ sprite->begin(bitmap16bit); // will take an allocated 16bit 5:6:5 RGB bitmap.
 
 The sprites which are passed a bitmap do not have an associated canvas so can't accept drawing commands. If a you allow the sprite to allocate its own canvas, you can obtain a pointer with the GetCanvas() method, which can accept the normal Arduino_Canvas drawing methods.
 
-If you need transparency, then use need to call the SetChromaKey(colour) method. If the sprite is canvas based or 16bit, then the colour value is the specific colour value to ignore during blitting. If the sprite is 8bit palette based then you need to specify the colour index (a value between 0 and 255).
+If you need transparency, then use need to call the SetChromaKey(colour) method. If the sprite is canvas based or 16bit, then the colour value is the specific colour value to ignore during blitting. If the sprite is 8bit palette based then you need to specify the colour index (a value between 0 and 255). To use the chroma key, you need to call the "WithKey" methods, i.e. DrawFastWithKey(), otherwise the transparency will be ignored.
 
 
+If the background of the display is static, then you need to call the SetBackingStore() method on the sprite and use the non-fast draw methods which save a copy of the background before drawing, which can then be restored by calling the Clear() method. This much faster if you only have a few small sprites moving over an unchanging background. Calling clear needs to be done in the reverse order to drawing.
 
+If the background is drawn every frame (which is more common in modern games), then use the "fast" drawing methods, which don't save a copy of the background. There is no need to call a sprite's clear() method.
+
+If the sprite is to be animated, then the bitmap/image the sprite is initilised with needs to be a sprite sheet (a single image with all frames of animation arranged in a regular grid). After initilisation, you need to call initAnim().
+
+sprite->initAnim(totalFrameCount, firstFrameTopLeftX, firstFrameTopLeftY, frameWidth, frameHeight)
+
+A special Scroll() method is also included which wraps an image around the display, useful for paralax scrolling.
