@@ -148,7 +148,7 @@ void Arduino_Sprite::DrawFastWithKey(uint16_t frame){
 }
 
 void Arduino_Sprite::DrawFastWithKey(int16_t x, int16_t y){
-    DrawFastWithKey(x, x, _frame);
+    DrawFastWithKey(x, y, _frame);
 }
 
 void Arduino_Sprite::DrawFastWithKey(int16_t x, int16_t y, uint16_t frame){
@@ -175,7 +175,7 @@ void Arduino_Sprite::DrawFast(uint16_t frame){
 }
 
 void Arduino_Sprite::DrawFast(int16_t x, int16_t y){
-    DrawFast(x, x, _frame);
+    DrawFast(x, y, _frame);
 }
 
 void Arduino_Sprite::DrawFast(int16_t x, int16_t y, uint16_t frame){
@@ -210,12 +210,12 @@ void Arduino_Sprite::Draw(uint16_t frame){
 
 void Arduino_Sprite::Draw(int16_t x, int16_t y){
     SaveBackground(x, y);
-    DrawFast(x, x, _frame);
+    DrawFast(x, y, _frame);
 }
 
 void Arduino_Sprite::Draw(int16_t x, int16_t y, uint16_t frame){
     SaveBackground(x, y);
-    DrawFast(x, x, frame);
+    DrawFast(x, y, frame);
 }
 
 
@@ -232,12 +232,12 @@ void Arduino_Sprite::DrawWithKey(uint16_t frame){
 
 void Arduino_Sprite::DrawWithKey(int16_t x, int16_t y){
     SaveBackground(x, y);
-    DrawFastWithKey(x, x, _frame);
+    DrawFastWithKey(x, y, _frame);
 }
 
 void Arduino_Sprite::DrawWithKey(int16_t x, int16_t y, uint16_t frame){
     SaveBackground(x, y);
-    DrawFastWithKey(x, x, frame);
+    DrawFastWithKey(x, y, frame);
 }
 
 
