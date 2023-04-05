@@ -3,11 +3,11 @@ A Sprite/Blitter library for use with the wonderfully portable Arduino_GFX Libra
 
 This an Alpha version of my Sprite/Blitter library. The Sprite Class can take a 16bit (RGB 5:6:5) image or a 256 colour palette image, both require a 16bit framebuffer (or Arduino_GFX canvas). The Sprite Class can also use a 16bit canvas as an image source, so you can draw to it using the normal canvas draw methods.
 
-Palette based sprites are faster and use less memory, but are limited to 256 colours per sprite (although each sprite can have its own uniqut 16bit palette, so this isn't too much of a limitiation). 
+Palette based sprites are faster and use less memory, but are limited to 256 colours per sprite (although each sprite can have its own unique 16bit palette, so this isn't too much of a limitation). 
 
 This library is still in development and its API/types will be subject to frequent and breaking changes until a Beta is reached, and there will be many bugs not yet found.
 
-Only tested on the ESP32-S3 with a 320*170 ST7789 based TFT display (i.e. the LilyGo T3).
+Tested on the ESP32-S3 with a 320*170 ST7789 based TFT display (i.e. the LilyGo T3), an ESP32-S3 with a 3320*240 ST7789 TFT Display (i.e. the lilyGo T-HMI), and an ESP32-S3 with a 480*480 ST7701S based Round TFT display (i.e. the LilyGo T-RGB).
 
 Videos of this in action:
 https://youtu.be/wZR8tQ5Uga4
