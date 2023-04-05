@@ -36,9 +36,9 @@ class Arduino_Sprite : public node_t{
   public:
   Arduino_Sprite(int16_t w, int16_t h, Arduino_GFX* output);
 
-  // proposed begin methods
-  void begin(void); //just setup single buffer with width and height
-  void begin(Arduino_Canvas* canvas);
+  // begin methods
+  Arduino_Canvas* begin(void); // use the returned Canvas for drawing operations.
+  void begin(Arduino_Canvas* canvas); //Provide your own canvas must be the same dimentions as the sprite
   void begin(uint8_t* source, uint16_t* pal); //setup but link to buffer (must be same width and height as created in constructor)
   void begin(uint16_t* source);
     

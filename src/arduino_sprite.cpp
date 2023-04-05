@@ -18,10 +18,11 @@ Arduino_Sprite::Arduino_Sprite(int16_t w, int16_t h, Arduino_GFX* output){
     _canvas = NULL;
 }
 
-void Arduino_Sprite::begin(){
+Arduino_Canvas*  Arduino_Sprite::begin(){
     _canvas = new Arduino_Canvas(_fw,_fh,_output);
     _canvas->begin(GFX_SKIP_OUTPUT_BEGIN);
     begin(_canvas->getFramebuffer());
+    return _canvas;
 }
 
 void Arduino_Sprite::begin(Arduino_Canvas* canvas){
@@ -137,6 +138,10 @@ int Arduino_Sprite::GetFrame(void){
 
 int Arduino_Sprite::GetFrames(void){
     return _frames;
+}
+
+Arduino_Canvas* Arduino_Sprite::GetCanvas(void){
+    return _canvas;
 }
 
 void Arduino_Sprite::DrawFastWithKey(void){
