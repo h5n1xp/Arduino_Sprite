@@ -7,7 +7,7 @@ Palette based sprites are faster and use less memory, but are limited to 256 col
 
 This library is still in development and its API/types will be subject to frequent and breaking changes until a Beta is reached, and there will be many bugs not yet found.
 
-Tested on the ESP32-S3 with a 320*170 ST7789 based TFT display (i.e. the LilyGo T3), an ESP32-S3 with a 3320*240 ST7789 TFT Display (i.e. the lilyGo T-HMI), and an ESP32-S3 with a 480*480 ST7701S based Round TFT display (i.e. the LilyGo T-RGB).
+Tested on the ESP32-S3 with a 320 by 170 ST7789 based TFT display (i.e. the LilyGo T3), an ESP32-S3 with a 320 by 240 ST7789 TFT Display (i.e. the lilyGo T-HMI), and an ESP32-S3 with a 480 by 480 ST7701S based Round TFT display (i.e. the LilyGo T-RGB).
 
 Videos of this in action:
 https://youtu.be/wZR8tQ5Uga4
