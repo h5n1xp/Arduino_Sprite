@@ -57,18 +57,18 @@ Arduino_Sprite* sprite;
 
 While(running){
   
-  //Clear any drawn sprites
-  sprite->Clear();
   
-  //Update sprite position/animation
+  sprite->Clear(); //Clear any drawn sprites
+  
+  
   doGameLogic();
-  sprite->Move();
+  sprite->Move(); //Update sprite position/animation
   
-  //Draw sprite to canvas
-  sprite->Draw();
   
-  //Upload canvas to the display
-  gfx->flush();
+  sprite->Draw(); //Draw sprite to canvas
+  
+  
+  gfx->flush(); //Upload canvas to the display
 
 }
   
