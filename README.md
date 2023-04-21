@@ -14,9 +14,8 @@ https://youtu.be/wZR8tQ5Uga4
 https://youtu.be/56ELuOAAgyg
 
 #Current Focus
-1. Cleaning up the Draw methods to include animation frame and tilemap support. Also want to add playfields, to make smooth scrolling esiser.
-2. Add RLE to the palette image format, this should reduce memory traffic and improve performance.
-3. Release an image conversion application, to generate compatible data.
+1. Add RLE to the palette image format, this should reduce memory traffic and improve performance.
+2. Release an image conversion application, to generate compatible data.
 
 #Usage
 The constrctor requires three parameters:
@@ -35,17 +34,44 @@ sprite->begin(bitmap8Bit, palette); // Will take an allocated 8bit indexed bitma
 
 sprite->begin(bitmap16bit); // will take an allocated 16bit 5:6:5 RGB bitmap.
 
+sprite->begin(bitmap16bit, Mode); // Set the blitter mode, useful for byte swapping if needed.
+
 The sprites which are passed a bitmap do not have an associated canvas so can't accept drawing commands. If a you allow the sprite to allocate its own canvas, you can obtain a pointer with the GetCanvas() method, which can accept the normal Arduino_Canvas drawing methods.
 
-If you need transparency, then use need to call the SetChromaKey(colour) method. If the sprite is canvas based or 16bit, then the colour value is the specific colour value to ignore during blitting. If the sprite is 8bit palette based then you need to specify the colour index (a value between 0 and 255). To use the chroma key, you need to call the "WithKey" methods, i.e. DrawFastWithKey(), otherwise the transparency will be ignored.
+If you need transparency, then use need to call the SetChromaKey(colour) method. If the sprite is canvas based or 16bit, then the colour value is the specific colour value to ignore during blitting. If the sprite is 8bit palette based then you need to specify the colour index (a value between 0 and 255). 
 
+If the background of the display is static, then you need to call the SetBackingStore() method on the sprites, they will now save a copy of the background before drawing, which can then be restored by calling the Clear() method. This much faster if you only have a few small sprites moving over an unchanging background. Calling clear needs to be done in the reverse order to drawing.
 
-If the background of the display is static, then you need to call the SetBackingStore() method on the sprite and use the non-fast draw methods which save a copy of the background before drawing, which can then be restored by calling the Clear() method. This much faster if you only have a few small sprites moving over an unchanging background. Calling clear needs to be done in the reverse order to drawing.
+If the background is drawn every frame (which is more common in modern games), then don't use the BackingStore. There is no need to call a sprite's clear() method, but if SetBackingStore is not set, then the Clear() method does nothing.
 
-If the background is drawn every frame (which is more common in modern games), then use the "fast" drawing methods, which don't save a copy of the background. There is no need to call a sprite's clear() method.
-
-If the sprite is to be animated, then the bitmap/image the sprite is initilised with needs to be a sprite sheet (a single image with all frames of animation arranged in a regular grid). After initilisation, you need to call initAnim().
+If the sprite is to be animated, then the bitmap/image with which the sprite is initilised needs to be a "sprite sheet" (a single image with all frames of animation arranged in a regular grid). After initilisation, you need to call the initAnim() method:
 
 sprite->initAnim(totalFrameCount, firstFrameTopLeftX, firstFrameTopLeftY, frameWidth, frameHeight)
 
 A special Scroll() method is also included which wraps an image around the display, useful for paralax scrolling.
+
+A typical main loop will look like this:
+
+Arduino_Canvas* gfx;
+Arduino_Sprite* sprite;
+
+While(running){
+  
+  //Clear any drawn sprites
+  sprite->Clear();
+  
+  //Update sprite position/animation
+  doGameLogic();
+  sprite->Move();
+  
+  //Draw sprite to canvas
+  sprite->Draw();
+  
+  //Upload canvas to the display
+  gfx->flush();
+
+}
+  
+
+
+
