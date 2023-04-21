@@ -33,7 +33,6 @@
 
 
 #include "arduino_sprite.h"
-//#include "arduino_sprite_palette.h"
 
 #include <stdlib.h>
 
@@ -92,79 +91,66 @@ void setup() {
  
 
   karamoon = new Arduino_Sprite(336,200,gfx);
-    karamoon->initAnim(1, 0, 0, 336, 140);
-    karamoon->begin((uint8_t *)imageKaramoon,paletteKaramoon);
-    karamoon->SetChromaKey(0x0);
+  karamoon->initAnim(1, 0, 0, 336, 140);
+  karamoon->begin((uint8_t *)imageKaramoon,paletteKaramoon);
     
     
-    l = new Arduino_Sprite(53,53,gfx);
-    l->begin((uint8_t*)imageL,paletteL);
-    l->SetChromaKey(0x0);
+  l = new Arduino_Sprite(53,53,gfx);
+  l->begin((uint8_t*)imageL,paletteL);
+  l->SetChromaKey(0x0);
 
-    c0 = new Arduino_Sprite(320,21,gfx);
-    c0->begin((uint8_t*)imageC0,paletteC0);
-    c0->SetChromaKey(0x6);
+  c0 = new Arduino_Sprite(320,21,gfx);
+  c0->begin((uint8_t*)imageC0,paletteC0);
+  c0->SetChromaKey(0x6);
 
-    c1 = new Arduino_Sprite(320,40,gfx);
-    c1->begin((uint8_t*)imageC1,paletteC1);
-    c1->SetChromaKey(0x0);
+  c1 = new Arduino_Sprite(320,40,gfx);
+  c1->begin((uint8_t*)imageC1,paletteC1);
+  c1->SetChromaKey(0x0);
 
-    c2 = new Arduino_Sprite(320,19,gfx);
-    c2->begin((uint8_t*)imageC2,paletteC2);
-    c2->SetChromaKey(0x0);
+  c2 = new Arduino_Sprite(320,19,gfx);
+  c2->begin((uint8_t*)imageC2,paletteC2);
+  c2->SetChromaKey(0x0);
 
-    c3 = new Arduino_Sprite(320,9,gfx);
-    c3->begin((uint8_t*)imageC3,paletteC3);
-    c3->SetChromaKey(0x0);
+  c3 = new Arduino_Sprite(320,9,gfx);
+  c3->begin((uint8_t*)imageC3,paletteC3);
+  c3->SetChromaKey(0x0);
 
-    c4 = new Arduino_Sprite(320,6,gfx);
-    c4->begin((uint8_t*)imageC4,paletteC4);
-    c4->SetChromaKey(0x0);
+  c4 = new Arduino_Sprite(320,6,gfx);
+  c4->begin((uint8_t*)imageC4,paletteC4);
+  c4->SetChromaKey(0x0);
     
     
     
-    foreground = new Arduino_Sprite(320,73,gfx);
-    foreground->begin((uint8_t*)imageM,paletteM);
-    foreground->SetChromaKey(0x0);
+  foreground = new Arduino_Sprite(320,73,gfx);
+  foreground->begin((uint8_t*)imageM,paletteM);
+  foreground->SetChromaKey(0x0);
     
     
-    g0 = new Arduino_Sprite(320,2,gfx);
-    g0->begin((uint8_t*)imageG0,paletteG0);
-    g0->SetChromaKey(0x0);
+  g0 = new Arduino_Sprite(320,2,gfx);
+  g0->begin((uint8_t*)imageG0,paletteG0);
 
-    g1 = new Arduino_Sprite(320,3,gfx);
-    g1->begin((uint8_t*)imageG1,paletteG1);
-    g1->SetChromaKey(0x0);
+  g1 = new Arduino_Sprite(320,3,gfx);
+  g1->begin((uint8_t*)imageG1,paletteG1);
+  
+  g2 = new Arduino_Sprite(320,7,gfx);
+  g2->begin((uint8_t*)imageG2,paletteG2);
 
-    g2 = new Arduino_Sprite(320,7,gfx);
-    g2->begin((uint8_t*)imageG2,paletteG2);
-    g2->SetChromaKey(0x0);
+  g3 = new Arduino_Sprite(320,7,gfx);
+  g3->begin((uint8_t*)imageG3,paletteG3);
 
-    g3 = new Arduino_Sprite(320,7,gfx);
-    g3->begin((uint8_t*)imageG3,paletteG3);
-    g3->SetChromaKey(0x0);
+  g4 = new Arduino_Sprite(320,11,gfx);
+  g4->begin((uint8_t*)imageG4,paletteG4);
 
-    g4 = new Arduino_Sprite(320,11,gfx);
-    g4->begin((uint8_t*)imageG4,paletteG4);
-    g4->SetChromaKey(0x0);
-
-
-    b = new Arduino_Sprite(320,21,gfx);
-    b->begin((uint8_t*)imageB,paletteB);
-    b->SetChromaKey(0x0);
-
+  b = new Arduino_Sprite(320,21,gfx);
+  b->begin((uint8_t*)imageB,paletteB);
+  b->SetChromaKey(0x0);
     
-    //fright = new Arduino_Sprite(320,240,gfx);
-    //fright->begin((uint16_t*)fn);
-    //fright->DrawFast();
-    
-    a = new Arduino_Sprite(240,50,gfx);
-    a->begin((uint8_t*)imageA,paletteA);
-    a->SetChromaKey(0x0);
-    a->Move(130, 94);
-    a->initAnim(5,0,0,40,50);
-    a->SetBackingStore();
-    a->SaveBackground(130,94);
+  a = new Arduino_Sprite(240,50,gfx);
+  a->begin((uint8_t*)imageA,paletteA);
+  a->SetChromaKey(0x0);
+  a->Move(130, 94);
+  a->initAnim(5,0,0,40,50);
+  a->SetBackingStore();
 
   ledcWrite(0, 255); /* Screen brightness to maximum) */
 
@@ -206,14 +192,14 @@ void Update(void){
     }
     
     karamoon->Move(scroll,0);
-    karamoon->ScrollFast();
+    karamoon->Scroll();
     
     
     
     
     //L
     l->Move(scrollL,20);
-    l->DrawFastWithKey();
+    l->Draw();
 
 
 
@@ -225,7 +211,7 @@ void Update(void){
     }
 
     c0->Move(scrollC0,0);
-    c0->ScrollFastWithKey();
+    c0->Scroll();
 
     
     //C1
@@ -236,7 +222,7 @@ void Update(void){
     }
 
     c1->Move(scrollC1,22);
-    c1->ScrollFastWithKey();
+    c1->Scroll();
     
     //C4
     scrollC4 -= 2;
@@ -246,7 +232,7 @@ void Update(void){
     }
 
     c4->Move(scrollC4,90);
-    c4->ScrollFastWithKey();
+    c4->Scroll();
     
     
     
@@ -258,7 +244,7 @@ void Update(void){
     }
 
     foreground->Move(scrollM,67);
-    foreground->ScrollFastWithKey();
+    foreground->Scroll();
     
     
     //C3
@@ -269,7 +255,7 @@ void Update(void){
     }
 
     c3->Move(scrollC3,81);
-    c3->ScrollFastWithKey();
+    c3->Scroll();
 
     //C2
     scrollC2 -= 5;
@@ -279,7 +265,7 @@ void Update(void){
     }
 
     c2->Move(scrollC2,62);
-    c2->ScrollFastWithKey();
+    c2->Scroll();
  
 
     //G0
@@ -290,7 +276,7 @@ void Update(void){
       }
 
       g0->Move(scrollG0,140);
-      g0->ScrollFast();
+      g0->Scroll();
 
 
       //G1
@@ -300,7 +286,7 @@ void Update(void){
         scrollG1 = 320 + scrollG1;
       }
       g1->Move(scrollG1,142);
-      g1->ScrollFast();
+      g1->Scroll();
 
     
       //G2
@@ -310,7 +296,7 @@ void Update(void){
         scrollG2 = 320 + scrollG2;
       }
       g2->Move(scrollG2,145);
-      g2->ScrollFast();
+      g2->Scroll();
 
     
       //G3
@@ -321,7 +307,7 @@ void Update(void){
       }
 
       g3->Move(scrollG3,152);
-      g3->ScrollFast();
+      g3->Scroll();
 
     
       //G4
@@ -331,7 +317,7 @@ void Update(void){
         scrollG4 = 320 + scrollG4;
       }
       g4->Move(scrollG4,159);
-      g4->ScrollFast();
+      g4->Scroll();
 
 
       // B
@@ -341,7 +327,7 @@ void Update(void){
         scrollB = 320 + scrollB;
       }
       b->Move(scrollB,149);
-      b->ScrollFastWithKey();
+      b->Scroll();
 
     
     if(otherFrame){
@@ -362,7 +348,7 @@ void Update(void){
     }
     
     a->Frame(aAframe);
-    a->DrawFastWithKey();
+    a->Draw();
     
     otherFrame = 1 - otherFrame;
      
