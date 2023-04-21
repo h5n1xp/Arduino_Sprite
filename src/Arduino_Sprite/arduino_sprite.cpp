@@ -8,12 +8,15 @@
 #include "arduino_sprite.h"
 
 Arduino_Sprite::Arduino_Sprite(int16_t w, int16_t h, Arduino_GFX* output){
+    flags = 0;
     _output = output;
     _frame = 0;
     _fw = w;
     _fh = h;
     _fx = 0;
     _fy = 0;
+    _hx = 0;
+    _hy = 0;
     _backingStore = NULL;
     _canvas = NULL;
 }
@@ -56,6 +59,38 @@ void Arduino_Sprite::begin(uint16_t* source){
   _blitter->_palette = NULL;
 }
 
+
+void Arduino_Sprite::begin(uint16_t* source, int blitterMode){
+
+
+    Arduino_Canvas* c;
+    switch (blitterMode) {
+        case 0:
+            begin(source);
+            break;
+            
+        case 1:
+            c = (Arduino_Canvas*)_output;
+            _blitter = new blitter_byteswap_t();
+            
+          _blitter->_destBuffer = c->getFramebuffer();
+          _blitter->_lineMod = c->width();
+          _blitter->_maxY = c->height();
+          _blitter->_width = _fw;
+          _blitter->_8bitBuffer = NULL;
+          _blitter->_16bitBuffer = source;
+          _blitter->_palette = NULL;
+            break;
+            
+        default:
+            printf("Mode: %d", blitterMode);
+            break;
+    }
+    
+    return;
+}
+
+
 void Arduino_Sprite::SetBackingStore(void){
 
     size_t s = _fw * _fh * 2;
@@ -84,7 +119,9 @@ void Arduino_Sprite::SetBackingStore(void){
 
 void Arduino_Sprite::SetChromaKey(uint16_t chromaKey){
   _blitter->_key = chromaKey;
-
+    
+  flags |= SPRITE_CHROMAKEY;
+    
   if(_backingStore){
     int i = 0;
     for(int y=0;y<_fh;++y){
@@ -122,6 +159,34 @@ void Arduino_Sprite::Move(int16_t sx, int16_t sy,uint16_t frame){
   _output_y = sy;
 }
 
+void Arduino_Sprite::Scale(float w, float h){
+    
+    if( w == 1 && h == 1){
+        flags &= ~SPRITE_SCALED;
+        return;;
+    }
+    
+    _scaleX = w;
+    _scaleY = h;
+    flags |= SPRITE_SCALED;
+}
+
+void Arduino_Sprite::ScaleOff(){
+    flags &= ~SPRITE_SCALED;
+}
+
+void Arduino_Sprite::SetHandle(int x, int y){
+    _hx = x;
+    _hy = y;
+}
+
+void Arduino_Sprite::Hidden(bool state){
+    if(state==true){
+        flags |= SPRITE_HIDDEN;
+    }else{
+        flags &= ~SPRITE_HIDDEN;
+    }
+}
 
 
 int Arduino_Sprite::GetX(void){
@@ -145,7 +210,7 @@ Arduino_Canvas* Arduino_Sprite::GetCanvas(void){
 }
 
 void Arduino_Sprite::DrawFastWithKey(void){
-  DrawFastWithKey(_output_x, _output_y, _frame);
+  DrawFastWithKey(_output_x - _hx, _output_y - _hy, _frame);
 }
 
 void Arduino_Sprite::DrawFastWithKey(uint16_t frame){
@@ -160,6 +225,32 @@ void Arduino_Sprite::DrawFastWithKey(int16_t x, int16_t y, uint16_t frame){
     _blitter->BlitFastWithKey(x, y, _fx + (_fw * frame), _fy, _fw, _fh);
 }
 
+
+void Arduino_Sprite::Scroll(){
+    
+    if(flags&SPRITE_CHROMAKEY){
+        
+        if(_output_x<0){
+            DrawFastWithKey(_output_x, _output_y, _frame);
+            DrawFastWithKey(_fw + _output_x, _output_y, _frame);
+        }else{
+            DrawFastWithKey(_output_x, _output_y, _frame);
+            DrawFastWithKey(_output_x -_fw, _output_y, _frame);
+        }
+        
+    }else{
+        
+        if(_output_x<0){
+            DrawFast(_output_x, _output_y, _frame);
+            DrawFast(_fw + _output_x, _output_y, _frame);
+        }else{
+            DrawFast(_output_x, _output_y, _frame);
+            DrawFast(_output_x -_fw, _output_y, _frame);
+        }
+        
+    }
+}
+
 void Arduino_Sprite::ScrollFastWithKey(){
     
     if(_output_x<0){
@@ -172,7 +263,7 @@ void Arduino_Sprite::ScrollFastWithKey(){
 }
 
 void Arduino_Sprite::DrawFast(void){
-  DrawFast(_output_x, _output_y, _frame);
+  DrawFast(_output_x - _hx, _output_y - _hy, _frame);
 }
 
 void Arduino_Sprite::DrawFast(uint16_t frame){
@@ -204,9 +295,34 @@ void Arduino_Sprite::ScrollFast(){
 
 
 void Arduino_Sprite::Draw(){
+    
+    if(flags&SPRITE_HIDDEN){
+        return;
+    }
+    
     SaveBackground(_output_x, _output_y);
-    DrawFast();
+    
+    if(flags&SPRITE_CHROMAKEY){
+        
+        if(flags&SPRITE_SCALED){
+            DrawFastWithKeyScaled();
+        }else{
+            DrawFastWithKey();
+        }
+        
+    }else{
+        
+        if(flags&SPRITE_SCALED){
+            DrawFastScaled();
+        }else{
+            DrawFast();
+        }
+    }
+    
+    
 }
+
+
 
 void Arduino_Sprite::Draw(uint16_t frame){
     SaveBackground(_output_x, _output_y);
@@ -250,13 +366,36 @@ void Arduino_Sprite::DrawWithKey(int16_t x, int16_t y, uint16_t frame){
 
 void Arduino_Sprite::SaveBackground(int16_t x, int16_t y){
     if(_backingStore){
-        _blitter->Save(x,y, _fw, _fh, _backingStore);
+        _blitter->Save(x - _hx ,y - _hy, _fw, _fh, _backingStore);
+        flags |= SPRITE_DRAWN;
     }
 }
 
 
 void Arduino_Sprite::Clear(){
-    if(_backingStore){
-        _blitter->Restore(_output_x,_output_y, _fw, _fh, _backingStore);
+    if(_backingStore && (flags & SPRITE_DRAWN)){
+        _blitter->Restore(_output_x - _hx,_output_y - _hy, _fw, _fh, _backingStore);
+        flags &= ~SPRITE_DRAWN;
     }
+}
+
+void Arduino_Sprite::DrawFastScaled(){
+    int tx = _fx + (_fw * _frame);
+    
+    int hx = _hx * _scaleX;
+    int hy = _hy * _scaleY;
+    
+    _blitter->BlitFastScaled(_output_x - hx, _output_y - hy, tx, _fy, _fw, _fh,_scaleX,_scaleY);
+  
+    
+}
+
+void Arduino_Sprite::DrawFastWithKeyScaled(){
+    int tx = _fx + (_fw * _frame);
+    
+    int hx = _hx * _scaleX;
+    int hy = _hy * _scaleY;
+    
+    _blitter->BlitFastWithKeyScaled(_output_x - hx, _output_y - hy, tx, _fy, _fw, _fh,_scaleX,_scaleY);
+  
 }

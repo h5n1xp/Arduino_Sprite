@@ -16,8 +16,11 @@ public:
     virtual void BlitFast(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h);
     virtual void BlitFastWithKey(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h);
     
-    void Save(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* buffer);
-    void Restore(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* buffer);
+    virtual void BlitFastScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh);
+    virtual void BlitFastWithKeyScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh);
+    
+    void Save(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t* buffer);
+    void Restore(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t* buffer);
     
     
     uint8_t* _8bitBuffer;
@@ -36,5 +39,16 @@ class blitter_palette_t : public blitter_t{
     void BlitFast(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h) override;
     void BlitFastWithKey(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h) override;
 };
+
+
+class blitter_byteswap_t : public blitter_t{
+    void BlitFast(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h) override;
+    void BlitFastWithKey(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h) override;
+    
+    void BlitFastScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh) override;
+    void BlitFastWithKeyScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh) override;
+    
+};
+
 
 #endif /* blitter_h */

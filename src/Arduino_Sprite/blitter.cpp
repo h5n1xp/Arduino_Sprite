@@ -7,6 +7,17 @@
 
 #include "blitter.h"
 
+typedef union {
+    uint32_t value;
+    struct{
+     uint8_t lsb;
+     uint8_t mlb;
+     uint8_t mub;
+     uint8_t msb;
+    };
+}dat32_t;
+
+
 void blitter_t::BlitFast(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h){
     
     if(dx < 0){
@@ -127,9 +138,199 @@ void blitter_t::BlitFastWithKey(int16_t dx, int16_t dy, int16_t sx, int16_t sy, 
     
 }
 
-
-void blitter_t::Save(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* buffer){
+void blitter_t::BlitFastScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh){
     
+    int frame = sx;
+    sx = 0;
+    
+    int iw = w;
+    int ih = h;
+    
+    w *=sw;
+    h *= sh;
+    
+    
+    
+    
+    float wi = 0;
+    if(w != 0){
+        wi = (float)(iw) / (float)(w);
+    }
+    
+    
+    float hi = 0;
+    if(h != 0){
+        hi = (float)(ih) / (float)h;
+    }
+    
+    
+    
+    if(dx < 0){
+        sx -= dx;
+        w +=dx;
+        dx = 0;
+    }
+    
+    if(dy < 0){
+        sy -= dy;
+        h +=dy;
+        dy = 0;
+    }
+    
+    if( (dx + w) > _lineMod){
+        
+        w -= ((dx+w) - _lineMod);
+        
+        if(w < 1){
+            return;
+        }
+        
+    }
+    
+    if( (dy + h) > _maxY){
+        
+        h -= ( (dy+h) - _maxY);
+        
+        if(h < 1){
+            return;
+        }
+        
+    }
+    
+    
+    
+    
+    float tempy = sy * hi;
+    
+    
+    
+    
+    for(int ty = 0; ty < h; ++ty){
+        
+        int iy = ((dy + ty) * _lineMod) + dx;
+        int jy = ( (int)(tempy) * _width) + frame;
+        tempy += hi;
+        
+        uint16_t* temp =&_16bitBuffer[jy];
+        uint16_t* out =&_destBuffer[iy];
+        
+        float tempx = sx * wi;
+        
+        for(int tx = 0; tx < w; ++tx){
+            
+            uint16_t pixel = temp[(int)tempx];
+            tempx += wi;
+            
+            //byte swapping for dave
+            //pixel = pixel << 8 | pixel >> 8;
+            
+            out[tx] = pixel;
+            
+        }
+        
+        
+    }
+    
+}
+void blitter_t::BlitFastWithKeyScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh){
+
+    int frame = sx;
+    sx = 0;
+    int iw = w;
+    int ih = h;
+    
+    w *=sw;
+    h *= sh;
+
+    
+    
+    
+    float wi = 0;
+    if(w != 0){
+        wi = (float)(iw) / (float)(w);
+    }
+    
+    
+    float hi = 0;
+    if(h != 0){
+        hi = (float)(ih) / (float)h;
+    }
+    
+    
+
+    
+    if(dx < 0){
+      sx -= dx;
+      w +=dx;
+      dx = 0;
+    }
+
+    if(dy < 0){
+      sy -= dy;
+      h +=dy;
+      dy = 0;
+    }
+
+    if( (dx + w) > _lineMod){
+
+      w -= ((dx+w) - _lineMod);
+
+      if(w < 1){
+        return;
+      }
+
+    }
+   
+    if( (dy + h) > _maxY){
+
+      h -= ( (dy+h) - _maxY);
+
+        if(h < 1){
+        return;
+      }
+
+    }
+
+
+
+    
+
+
+    float tempy = sy * hi;
+
+    
+    for(int ty = 0; ty < h; ++ty){
+
+      int iy = ((dy + ty) * _lineMod) + dx;
+      int jy = (((int)(tempy) * _width) + frame); //int jy = (((int)(tempy) * _width));
+      tempy += hi;
+        
+      uint16_t* temp =&_16bitBuffer[jy];
+      uint16_t* out =&_destBuffer[iy];
+
+      float tempx = sx * wi;
+
+      for(int tx = 0; tx < w; ++tx){
+          
+          uint16_t pixel = temp[(int)tempx];
+          tempx += wi;
+          
+          if(pixel != _key){
+            //byte swapping for dave
+            //pixel = pixel << 8 | pixel >> 8;
+
+          out[tx] = pixel;
+        }
+      }
+
+
+    }
+    
+}
+
+void blitter_t::Save(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t* buffer){
+    
+
     if(x < 0){
         w += x;
         x = 0;
@@ -144,6 +345,10 @@ void blitter_t::Save(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* buf
     if( (x + w) > _lineMod){
         
         w -= (x + w) - _lineMod;
+     
+        if(w < 1){
+            return;
+        }
         
     }
            
@@ -151,9 +356,18 @@ void blitter_t::Save(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* buf
         
         h -= (y + h) - _maxY;
         
+        if(h < 1){
+            return;
+        }
+     
     }
-             
+         
+    
     int i = 0;
+    
+    //printf("%d, %d, %d, %d\n",x,y,w,h);
+    
+    
     
     for(int ty=0; ty<h; ++ty){
         
@@ -162,14 +376,14 @@ void blitter_t::Save(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* buf
         for(int tx=0; tx<w; ++tx){
             
             buffer[i++] = temp[tx];
-            
+            //temp[tx] = 0xFFFF;
         }
     }
     
-    
+    return;
 }
-void blitter_t::Restore(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* buffer){
-    
+void blitter_t::Restore(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t* buffer){
+
     if(x < 0){
         w += x;
         x = 0;
@@ -185,11 +399,19 @@ void blitter_t::Restore(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* 
         
         w -= (x + w) - _lineMod;
         
+        if(w < 1){
+            return;
+        }
+        
     }
            
     if( (y + h) > _maxY){
         
         h -= (y + h) - _maxY;
+        
+        if(h < 1){
+            return;
+        }
         
     }
              
@@ -201,13 +423,14 @@ void blitter_t::Restore(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* 
         
         for(int tx=0; tx<w; ++tx){
             
-             temp[tx] = buffer[i++];
+            temp[tx] = buffer[i++];
             
         }
     }
     
 }
 
+//********************************************* Palette
 
 void blitter_palette_t::BlitFastWithKey(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h){
 
@@ -434,4 +657,316 @@ void blitter_palette_t::BlitFast(int16_t dx, int16_t dy, int16_t sx, int16_t sy,
 
   }
 
+}
+
+
+void blitter_byteswap_t::BlitFast(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h){
+    
+    if(dx < 0){
+      sx -= dx;
+      w +=dx;
+      dx = 0;
+    }
+
+    if(dy < 0){
+      sy -= dy;
+      h +=dy;
+      dy = 0;
+    }
+
+    if( (dx + w) > _lineMod){
+
+      w -= ((dx+w) - _lineMod);
+
+      if(w < 1){
+        return;
+      }
+
+    }
+   
+    if( (dy + h) > _maxY){
+
+      h -= ( (dy+h) - _maxY);
+
+        if(h < 1){
+        return;
+      }
+
+    }
+
+
+
+    for(int ty = 0; ty < h; ++ty){
+
+      int iy = ((dy + ty) * _lineMod) + dx;
+      int jy = (((sy + ty) * _width)) + sx;
+
+      uint16_t* temp =&_16bitBuffer[jy];
+      uint16_t* out =&_destBuffer[iy];
+
+      for(int tx = 0; tx < w; ++tx){
+
+        uint16_t p = temp[tx];
+        p = p << 8 | p >> 8;
+        out[tx] = p;
+
+        //out[tx] = temp[tx];
+      }
+
+
+    }
+
+    
+}
+void blitter_byteswap_t::BlitFastWithKey(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h){
+    
+    if(dx < 0){
+      sx -= dx;
+      w +=dx;
+      dx = 0;
+    }
+
+    if(dy < 0){
+      sy -= dy;
+      h +=dy;
+      dy = 0;
+    }
+
+    if( (dx + w) > _lineMod){
+
+      w -= ((dx+w) - _lineMod);
+
+      if(w < 1){
+        return;
+      }
+
+    }
+   
+    if( (dy + h) > _maxY){
+
+      h -= ( (dy+h) - _maxY);
+
+        if(h < 1){
+        return;
+      }
+
+    }
+
+
+
+    for(int ty = 0; ty < h; ++ty){
+
+      int iy = ((dy + ty) * _lineMod) + dx;
+      int jy = (((sy + ty) * _width)) + sx;
+
+      uint16_t* temp =&_16bitBuffer[jy];
+      uint16_t* out =&_destBuffer[iy];
+
+      for(int tx = 0; tx < w; ++tx){
+          
+          uint16_t pixel = temp[tx];
+          
+          if(pixel != _key){
+            pixel = pixel << 8 | pixel >> 8;
+            out[tx] = pixel;
+          }
+      }
+
+
+    }
+
+    
+}
+
+void blitter_byteswap_t::BlitFastScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh){
+    
+    int frame = sx;
+    sx = 0;
+    
+    int iw = w;
+    int ih = h;
+    
+    w *=sw;
+    h *= sh;
+
+    
+    
+    
+    float wi = 0;
+    if(w != 0){
+        wi = (float)(iw) / (float)(w);
+    }
+    
+    
+    float hi = 0;
+    if(h != 0){
+        hi = (float)(ih) / (float)h;
+    }
+    
+    
+    if(dx < 0){
+      sx -= dx;
+      w +=dx;
+      dx = 0;
+    }
+
+    if(dy < 0){
+      sy -= dy;
+      h +=dy;
+      dy = 0;
+    }
+
+    if( (dx + w) > _lineMod){
+
+      w -= ((dx+w) - _lineMod);
+
+      if(w < 1){
+        return;
+      }
+
+    }
+   
+    if( (dy + h) > _maxY){
+
+      h -= ( (dy+h) - _maxY);
+
+        if(h < 1){
+        return;
+      }
+
+    }
+
+
+
+    
+
+
+
+    float tempy = sy * hi;
+    
+    for(int ty = 0; ty < h; ++ty){
+
+      int iy = ((dy + ty) * _lineMod) + dx;
+      int jy = ((int)(tempy) * _width) + frame;
+      tempy += hi;
+        
+      uint16_t* temp =&_16bitBuffer[jy];
+      uint16_t* out =&_destBuffer[iy];
+
+      float tempx = sx * wi;
+
+      for(int tx = 0; tx < w; ++tx){
+          
+          uint16_t pixel = temp[(int)tempx];
+          tempx += wi;
+          
+            //byte swapping for dave
+            pixel = pixel << 8 | pixel >> 8;
+
+          out[tx] = pixel;
+
+      }
+
+
+    }
+
+
+
+    
+}
+
+void blitter_byteswap_t::BlitFastWithKeyScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh){
+    
+    int frame = sx;
+    sx = 0;
+    
+    int iw = w;
+    int ih = h;
+    
+    w *=sw;
+    h *= sh;
+
+    
+    
+    
+    float wi = 0;
+    if(w != 0){
+        wi = (float)(iw) / (float)(w);
+    }
+    
+    
+    float hi = 0;
+    if(h != 0){
+        hi = (float)(ih) / (float)h;
+    }
+    
+    
+    if(dx < 0){
+      sx -= dx;
+      w +=dx;
+      dx = 0;
+    }
+
+    if(dy < 0){
+      sy -= dy;
+      h +=dy;
+      dy = 0;
+    }
+
+    if( (dx + w) > _lineMod){
+
+      w -= ((dx+w) - _lineMod);
+
+      if(w < 1){
+        return;
+      }
+
+    }
+   
+    if( (dy + h) > _maxY){
+
+      h -= ( (dy+h) - _maxY);
+
+        if(h < 1){
+        return;
+      }
+
+    }
+
+
+
+    
+
+
+
+    float tempy = sy * hi;
+    
+    for(int ty = 0; ty < h; ++ty){
+
+      int iy = ((dy + ty) * _lineMod) + dx;
+      int jy = ((int)(tempy) * _width) + frame;
+      tempy += hi;
+        
+      uint16_t* temp =&_16bitBuffer[jy];
+      uint16_t* out =&_destBuffer[iy];
+
+      float tempx = sx * wi;
+
+      for(int tx = 0; tx < w; ++tx){
+          
+          uint16_t pixel = temp[(int)tempx];
+          tempx += wi;
+          
+          if(pixel != _key){
+            //byte swapping for dave
+            pixel = pixel << 8 | pixel >> 8;
+
+          out[tx] = pixel;
+        }
+      }
+
+
+    }
+
+    
 }
