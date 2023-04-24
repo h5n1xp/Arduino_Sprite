@@ -659,6 +659,198 @@ void blitter_palette_t::BlitFast(int16_t dx, int16_t dy, int16_t sx, int16_t sy,
 
 }
 
+void blitter_palette_t::BlitFastScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh){
+    
+    int frame = sx;
+    sx = 0;
+    
+    int iw = w;
+    int ih = h;
+    
+    w *=sw;
+    h *= sh;
+    
+    
+    
+    
+    float wi = 0;
+    if(w != 0){
+        wi = (float)(iw) / (float)(w);
+    }
+    
+    
+    float hi = 0;
+    if(h != 0){
+        hi = (float)(ih) / (float)h;
+    }
+    
+    
+    
+    if(dx < 0){
+        sx -= dx;
+        w +=dx;
+        dx = 0;
+    }
+    
+    if(dy < 0){
+        sy -= dy;
+        h +=dy;
+        dy = 0;
+    }
+    
+    if( (dx + w) > _lineMod){
+        
+        w -= ((dx+w) - _lineMod);
+        
+        if(w < 1){
+            return;
+        }
+        
+    }
+    
+    if( (dy + h) > _maxY){
+        
+        h -= ( (dy+h) - _maxY);
+        
+        if(h < 1){
+            return;
+        }
+        
+    }
+    
+    
+    
+    
+    float tempy = sy * hi;
+    
+    
+    
+    
+    for(int ty = 0; ty < h; ++ty){
+        
+        int iy = ((dy + ty) * _lineMod) + dx;
+        int jy = ( (int)(tempy) * _width) + frame;
+        tempy += hi;
+        
+        uint8_t* temp =&_8bitBuffer[jy];
+        uint16_t* out =&_destBuffer[iy];
+        
+        float tempx = sx * wi;
+        
+        for(int tx = 0; tx < w; ++tx){
+            
+            uint8_t colour = temp[(int)tempx];
+            tempx += wi;
+            
+            //byte swapping for dave
+            //pixel = pixel << 8 | pixel >> 8;
+            
+            out[tx] = _palette[colour];
+            
+        }
+        
+        
+    }
+    
+}
+
+void blitter_palette_t::BlitFastWithKeyScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh){
+
+    int frame = sx;
+    sx = 0;
+    int iw = w;
+    int ih = h;
+    
+    w *=sw;
+    h *= sh;
+
+    
+    
+    
+    float wi = 0;
+    if(w != 0){
+        wi = (float)(iw) / (float)(w);
+    }
+    
+    
+    float hi = 0;
+    if(h != 0){
+        hi = (float)(ih) / (float)h;
+    }
+    
+    
+
+    
+    if(dx < 0){
+      sx -= dx;
+      w +=dx;
+      dx = 0;
+    }
+
+    if(dy < 0){
+      sy -= dy;
+      h +=dy;
+      dy = 0;
+    }
+
+    if( (dx + w) > _lineMod){
+
+      w -= ((dx+w) - _lineMod);
+
+      if(w < 1){
+        return;
+      }
+
+    }
+   
+    if( (dy + h) > _maxY){
+
+      h -= ( (dy+h) - _maxY);
+
+        if(h < 1){
+        return;
+      }
+
+    }
+
+
+
+    
+
+
+    float tempy = sy * hi;
+
+    
+    for(int ty = 0; ty < h; ++ty){
+
+      int iy = ((dy + ty) * _lineMod) + dx;
+      int jy = (((int)(tempy) * _width) + frame); //int jy = (((int)(tempy) * _width));
+      tempy += hi;
+        
+      uint8_t* temp =&_8bitBuffer[jy];
+      uint16_t* out =&_destBuffer[iy];
+
+      float tempx = sx * wi;
+
+      for(int tx = 0; tx < w; ++tx){
+          
+          uint8_t colour = temp[(int)tempx];
+          tempx += wi;
+          
+          if(colour != _key){
+            //byte swapping for dave
+            //pixel = pixel << 8 | pixel >> 8;
+
+              out[tx] = _palette[colour];
+        }
+      }
+
+
+    }
+    
+}
+
+// Byte Swap ************************************************************
 
 void blitter_byteswap_t::BlitFast(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h){
     

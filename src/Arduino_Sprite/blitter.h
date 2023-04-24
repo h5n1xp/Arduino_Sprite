@@ -38,6 +38,9 @@ public:
 class blitter_palette_t : public blitter_t{
     void BlitFast(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h) override;
     void BlitFastWithKey(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h) override;
+    
+    void BlitFastScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh) override;
+    void BlitFastWithKeyScaled(int16_t dx, int16_t dy, int16_t sx, int16_t sy, int16_t w, int16_t h, float sw, float sh) override;
 };
 
 
