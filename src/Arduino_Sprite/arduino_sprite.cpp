@@ -122,6 +122,8 @@ void Arduino_Sprite::SetChromaKey(uint16_t chromaKey){
     
   flags |= SPRITE_CHROMAKEY;
     
+    
+/*
   if(_backingStore){
     int i = 0;
     for(int y=0;y<_fh;++y){
@@ -132,6 +134,8 @@ void Arduino_Sprite::SetChromaKey(uint16_t chromaKey){
       }
     }
   }
+ */
+    
 }
 
 
@@ -398,4 +402,20 @@ void Arduino_Sprite::DrawFastWithKeyScaled(){
     
     _blitter->BlitFastWithKeyScaled(_output_x - hx, _output_y - hy, tx, _fy, _fw, _fh,_scaleX,_scaleY);
   
+}
+
+
+//Arduino_Framebuffer
+
+
+void Arduino_FrameBuffer::WritePixel(int16_t x, int16_t y, uint16_t colour){
+    
+    //_framebuffer[
+    
+}
+
+uint16_t Arduino_FrameBuffer::readPixel(int16_t x, int16_t y){
+    
+    return _framebuffer[ (y * WIDTH) + x];
+   // return 0x0;
 }

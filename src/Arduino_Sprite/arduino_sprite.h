@@ -142,9 +142,19 @@ class Arduino_Sprite : public node_t{
 };
 
 
-class Arduino_FrameBuffer : Arduino_Canvas{
-    void Attach(Arduino_Sprite* sprite);
-    void Update(void);
+class Arduino_FrameBuffer : public Arduino_Canvas{
+public:
+    
+    Arduino_FrameBuffer(uint16_t w, uint16_t h, Arduino_GFX* output, uint16_t x, uint16_t y) : Arduino_Canvas(w,h,output,x,y){
+        
+    }
+    
+   // void Attach(Arduino_Sprite* sprite);
+   // void Update(void);
+    
+   uint16_t readPixel(int16_t x,int16_t y);
+   void WritePixel(int16_t x, int16_t y, uint16_t colour);
+protected:
     list_t* spriteList;
 };
 
